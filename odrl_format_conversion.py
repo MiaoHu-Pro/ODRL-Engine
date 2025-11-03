@@ -67,6 +67,37 @@ def normalize_odrl_graph(g):
 
     return g
 
+def isJsonBlankNodesGraphFormat(json_ld_obj):
+    """
+    Returns True if the JSON-LD object contains explicitly defined blank nodes
+    (e.g., "@id": "_:b0"), otherwise False.
+    """
+
+    # Ensure input is a dictionary
+    if not isinstance(json_ld_obj, dict):
+        return False
+
+    # Extract the "@graph" key if it exists
+    graph_data = json_ld_obj.get("@graph", None)
+
+    if not graph_data or not isinstance(graph_data, list):
+        return False
+
+    # Helper function to recursively search for blank node identifiers
+    def contains_blank_node(obj):
+        if isinstance(obj, dict):
+            # Check if the dict has an @id starting with "_:"
+            if "@id" in obj and isinstance(obj["@id"], str) and obj["@id"].startswith("_:"):
+                return True
+            # Otherwise, recurse into values
+            return any(contains_blank_node(v) for v in obj.values())
+        elif isinstance(obj, list):
+            return any(contains_blank_node(i) for i in obj)
+        return False
+
+    # Check all objects in @graph for blank nodes
+    return any(contains_blank_node(item) for item in graph_data)
+
 def custom_convert_odrl_policy(jsonld_str):
     g = Graph()
     g.parse(data=jsonld_str, format='json-ld')
