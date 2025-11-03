@@ -1,0 +1,15 @@
+[
+  {
+    "rule": "http://www.w3.org/ns/odrl/2/Permission",
+    "actor": "https://w3id.org/dpv/owl#DataProcessor",
+    "action": "http://www.w3.org/ns/odrl/2/aggregate",
+    "target": "https://upcast-project.eu/dataset/189aa4e7-e443-4480-99aa-89542e7b40e5",
+    "purpose": "https://w3id.org/dpv/owl#DeliveryOfGoods",
+    "query": "",
+    "constraints": [],
+    "actorrefinements": [],
+    "actionrefinements": [],
+    "targetrefinements": [],
+    "purposerefinements": []
+  }
+]
