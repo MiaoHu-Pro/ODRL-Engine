@@ -1,0 +1,159 @@
+{
+  "_id": "68ecece0bb1e35369de0919a",
+  "title": null,
+  "type": "request",
+  "consumer_id": "68c490375a5c04b2f5f9ed75",
+  "provider_id": "68c48ff75a5c04b2f5f9ed74",
+  "data_processing_workflow_object": {
+    "verified": true,
+    "id": "WFM3764256ad7a04bd19dc986ec675c7d96_copy_copy",
+    "label": "New Process WFM3764256ad7a04bd19dc986ec675c7d96",
+    "description": "no description",
+    "isVerified": true,
+    "hasResolvedConflicts": false,
+    "initiators": [
+      "DataProcessor"
+    ],
+    "purposes": [
+      "DeliveryOfGoods"
+    ],
+    "createdAt": null,
+    "updatedAt": null,
+    "constraint": null,
+    "energyConstraint": null,
+    "pricingConstraint": null
+  },
+  "natural_language_document": "natural_language_document_value",
+  "resource_description_object": {
+    "title": "IntegrationTestTake2",
+    "price": 501.2,
+    "price_unit": "USD/Month",
+    "uri": "https://upcast-project.eu/dataset/189aa4e7-e443-4480-99aa-89542e7b40e5",
+    "policy_url": "https://upcast-project.eu/policy/67c6a79c-f6d4-48af-947f-a32932201533",
+    "environmental_cost_of_generation": {},
+    "environmental_cost_of_serving": {},
+    "description": "\nA dataset profile created to test integration among UPCAST plugins and dashboards. It's an imaginary set of Agreements between Providers and Consumers.",
+    "type_of_data": null,
+    "data_format": "JSON",
+    "data_size": "12333",
+    "geographic_scope": null,
+    "tags": null,
+    "publisher": "https://upcast-project.eu/producer/c04de24d-1d27-45f8-8a76-8e8388d48739",
+    "theme": [],
+    "distribution": {
+      "format": "JSON",
+      "mediaType": "TEXT",
+      "url": "https://testdata-mag.it/api/v3/"
+    },
+    "created_at": "2025-10-13T11:17:46.393332",
+    "updated_at": "2025-10-13T11:17:46.393342",
+    "raw_object": null
+  },
+  "odrl_policy": {
+    "@graph": [
+      {
+        "@id": "_:b0",
+        "odrl:source": "https://upcast-project.eu/dataset/189aa4e7-e443-4480-99aa-89542e7b40e5",
+        "@type": "odrl:Asset"
+      },
+      {
+        "@id": "_:b1",
+        "odrl:leftOperand": {
+          "@id": "odrl:purpose"
+        },
+        "odrl:operator": {
+          "@id": "odrl:eq"
+        },
+        "odrl:rightOperandReference": {
+          "@value": "https://w3id.org/dpv/owl#DeliveryOfGoods",
+          "@type": "xsd:anyURI"
+        }
+      },
+      {
+        "@id": "https://upcast-project.eu/policy/67c6a79c-f6d4-48af-947f-a32932201533",
+        "odrl:permission": {
+          "@id": "http://upcast-project.eu/policy/permission/e7f8203c-ded8-42d8-ae4b-eefc5ad49c5c"
+        },
+        "@type": "odrl:Request"
+      },
+      {
+        "@id": "http://upcast-project.eu/policy/permission/e7f8203c-ded8-42d8-ae4b-eefc5ad49c5c",
+        "odrl:assignee": {
+          "@id": "_:b2"
+        },
+        "odrl:action": {
+          "@id": "_:b3"
+        },
+        "odrl:target": {
+          "@id": "_:b0"
+        },
+        "odrl:constraint": {
+          "@id": "_:b1"
+        }
+      },
+      {
+        "@id": "_:b2",
+        "odrl:source": {
+          "@id": "https://w3id.org/dpv/owl#DataProcessor"
+        },
+        "@type": "odrl:Party"
+      },
+      {
+        "@id": "_:b3",
+        "rdf:value": {
+          "@id": "odrl:aggregate"
+        }
+      }
+    ],
+    "@context": {
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "odrl": "http://www.w3.org/ns/odrl/2/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "owl": "http://www.w3.org/2002/07/owl#"
+    },
+    "data": [
+      {
+        "rule": "http://www.w3.org/ns/odrl/2/Permission",
+        "actor": "https://w3id.org/dpv/owl#DataProcessor",
+        "action": "http://www.w3.org/ns/odrl/2/aggregate",
+        "target": "https://upcast-project.eu/dataset/189aa4e7-e443-4480-99aa-89542e7b40e5",
+        "purpose": "https://w3id.org/dpv/owl#DeliveryOfGoods",
+        "query": "",
+        "constraints": [],
+        "actorrefinements": [],
+        "actionrefinements": [],
+        "targetrefinements": [],
+        "purposerefinements": []
+      }
+    ],
+    "odrl": {
+      "permission": [
+        {
+          "action": "http://www.w3.org/ns/odrl/2/aggregate",
+          "assignee": "https://w3id.org/dpv/owl#DataProcessor",
+          "target": "https://upcast-project.eu/dataset/189aa4e7-e443-4480-99aa-89542e7b40e5",
+          "constraint": [
+            {
+              "leftOperand": "purpose",
+              "operator": "http://www.w3.org/ns/odrl/2/eq",
+              "rightOperand": "https://w3id.org/dpv/owl#DeliveryOfGoods"
+            }
+          ]
+        }
+      ],
+      "uid": "http://example.org/policy-2b596132-7a23-42af-8291-cef774ce5e8a",
+      "@context": [
+        "http://www.w3.org/ns/odrl.jsonld",
+        {
+          "dcat": "http://www.w3.org/ns/dcat#",
+          "dpv": "https://w3id.org/dpv/owl#"
+        }
+      ],
+      "@type": "Policy"
+    }
+  },
+  "negotiation_id": "68ecdfdabb1e35369de09199",
+  "created_at": "2025-10-13T12:13:20.520891",
+  "updated_at": "2025-10-13T12:13:20.524000"
+}

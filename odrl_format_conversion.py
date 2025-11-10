@@ -123,6 +123,7 @@ def custom_convert_odrl_policy(jsonld_str):
           (odrl:permission odrl:Permission)
           (odrl:prohibition odrl:Prohibition)
           (odrl:obligation odrl:Obligation)
+          (odrl:duty odrl:Duty)
         }
       }
     """
@@ -620,6 +621,47 @@ def convert_list_to_odrl_jsonld_no_user(data_list):
         del policy["rule"]
     return policy
 
+
+def odrl_convertor(data_dic):
+    flg = isJsonBlankNodesGraphFormat(data_dic["odrl_policy"])
+
+    if flg:
+        # it has a graph item
+
+        # format conversion
+        cactus_format = data_dic["odrl_policy"]
+
+        negotiation_front_format = custom_convert_odrl_policy(cactus_format)
+
+        # # save
+        # with open("example_policies/graph_format_negotiation_front_format_v3.json", "w", encoding="utf-8") as f:
+        #     json.dump(negotiation_front_format, f, ensure_ascii=False, indent=2)
+
+        # odrl parse, after that, new_odrl_format can be accepted by contract-service
+        filtered_data = filter_dicts_with_none_values(negotiation_front_format)
+
+        # # save
+        # with open("example_policies/graph_format_filtered_data_v3.json", "w",
+        #           encoding="utf-8") as f:
+        #     json.dump(filtered_data, f, ensure_ascii=False, indent=2)
+
+        odrl_format = convert_list_to_odrl_jsonld_no_user(filtered_data)
+
+        # # save
+        # with open("example_policies/graph_format_odrl_format_v3.json", "w", encoding="utf-8") as f:
+        #     json.dump(odrl_format, f, ensure_ascii=False, indent=2)
+
+        data_dic["odrl_policy"]["data"] = filtered_data
+        data_dic["odrl_policy"]["odrl"] = odrl_format
+
+
+
+        return data_dic
+
+
+    else:
+        return data_dic
+
 if __name__ == "__main__":
 
     """
@@ -663,35 +705,47 @@ if __name__ == "__main__":
     """
 
     # read a policy file
-    p = Path("./example_policies/graph_format.json")
+    p = Path("./example_policies/consumerRequest.json")
     with p.open(encoding="utf-8") as f:
         cactus_format = json.load(f)
 
-    # ODRL validation check
-    validate.generate_ODRL_diagnostic_report(cactus_format)
+    data_dict = odrl_convertor(cactus_format)
 
-    # format conversion
-    negotiation_front_format = custom_convert_odrl_policy(cactus_format) #(see https://colab.research.google.com/drive/1bLIqDCpadolC1dfyC4z9p9HPtnEvrqSx#scrollTo=GqYKvyFkuqUa)
-
-    # # save
-    with open("example_policies/graph_format_negotiation_front_format_v3.json", "w", encoding="utf-8") as f:
-        json.dump(negotiation_front_format, f, ensure_ascii=False, indent=2)
-
-    # odrl parse, after that, new_odrl_format can be accepted by contract-service
-    filtered_data = filter_dicts_with_none_values(negotiation_front_format)
-
-    # # save
-    with open("example_policies/graph_format_filtered_data_v3.json", "w",
-              encoding="utf-8") as f:
-        json.dump(filtered_data, f, ensure_ascii=False, indent=2)
+    with open("example_policies/consumerRequest_support.json", "w", encoding="utf-8") as f:
+        json.dump(data_dict, f, ensure_ascii=False, indent=2)
 
 
-    odrl_format = convert_list_to_odrl_jsonld_no_user(filtered_data)
 
-
-    # # save
-    with open("example_policies/graph_format_odrl_format_v3.json", "w", encoding="utf-8") as f:
-        json.dump(odrl_format, f, ensure_ascii=False, indent=2)
+    # # read a policy file
+    # p = Path("./example_policies/graph_format.json")
+    # with p.open(encoding="utf-8") as f:
+    #     cactus_format = json.load(f)
+    #
+    # # ODRL validation check
+    # validate.generate_ODRL_diagnostic_report(cactus_format)
+    #
+    # # format conversion
+    # negotiation_front_format = custom_convert_odrl_policy(cactus_format) #(see https://colab.research.google.com/drive/1bLIqDCpadolC1dfyC4z9p9HPtnEvrqSx#scrollTo=GqYKvyFkuqUa)
+    #
+    # # # save
+    # with open("example_policies/graph_format_negotiation_front_format_v3.json", "w", encoding="utf-8") as f:
+    #     json.dump(negotiation_front_format, f, ensure_ascii=False, indent=2)
+    #
+    # # odrl parse, after that, new_odrl_format can be accepted by contract-service
+    # filtered_data = filter_dicts_with_none_values(negotiation_front_format)
+    #
+    # # # save
+    # with open("example_policies/graph_format_filtered_data_v3.json", "w",
+    #           encoding="utf-8") as f:
+    #     json.dump(filtered_data, f, ensure_ascii=False, indent=2)
+    #
+    #
+    # odrl_format = convert_list_to_odrl_jsonld_no_user(filtered_data)
+    #
+    #
+    # # # save
+    # with open("example_policies/graph_format_odrl_format_v3.json", "w", encoding="utf-8") as f:
+    #     json.dump(odrl_format, f, ensure_ascii=False, indent=2)
 
 
 
