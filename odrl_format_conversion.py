@@ -14,7 +14,6 @@ DPV = Namespace("https://w3id.org/dpv/dpv-owl#")
 EX = Namespace("http://example.org/resource/")
 
 
-
 def normalize_odrl_graph(g):
     properties_to_wrap = [ODRL.action, ODRL.assignee, ODRL.assigner, ODRL.target]
 
@@ -67,6 +66,7 @@ def normalize_odrl_graph(g):
 
     return g
 
+
 def isJsonBlankNodesGraphFormat(json_ld_obj):
     """
     Returns True if the JSON-LD object contains explicitly defined blank nodes
@@ -98,13 +98,14 @@ def isJsonBlankNodesGraphFormat(json_ld_obj):
     # Check all objects in @graph for blank nodes
     return any(contains_blank_node(item) for item in graph_data)
 
+
 def custom_convert_odrl_policy(jsonld_str):
     g = Graph()
     g.parse(data=jsonld_str, format='json-ld')
     g = normalize_odrl_graph(g)
     # normalise_here
 
-    #print(g.serialize(format='turtle'))
+    # print(g.serialize(format='turtle'))
 
     results = []
 
@@ -138,6 +139,7 @@ def custom_convert_odrl_policy(jsonld_str):
         results.append(processed_rule)
 
     return results
+
 
 # # from philip
 # def process_rule(g, rule_uri, rule_type):
@@ -268,7 +270,6 @@ def custom_convert_odrl_policy(jsonld_str):
 #     }
 
 
-
 def process_rule(g, rule_uri, rule_type):
     # Helper to run SPARQL query and get first result
     def get_single_value(query, bindings={}):
@@ -344,18 +345,28 @@ def process_rule(g, rule_uri, rule_type):
     """ % rule_uri
     constraints = group_constraints_or_refinements(constraints_query)
 
-    # Extract purpose constraint if it is the only constraint
+    # Extract purpose constraints with equality operator
     purpose = ""
-    if len(constraints) == 1:
-        constraint = constraints[0]
-        if (
-            constraint.get("type") == str(ODRL.purpose)
-            and constraint.get("operator") == str(ODRL.eq)
-        ):
-            values = constraint.get("value") or []
-            if values:
-                purpose = values[0]
-                constraints = []
+    purpose_constraints = [
+        c for c in constraints
+        if c.get("type") == str(ODRL.purpose) and c.get("operator") == str(ODRL.eq)
+    ]
+
+    if purpose_constraints:
+        # Pick the first equality purpose constraint, if there are multiple ones (as there should be only one anyway)
+        first = purpose_constraints[0]
+        values = first.get("value") or []
+        if values:
+            purpose = values[0]
+
+        # Remove all purpose equality constraints from the constraints list
+        constraints = [
+            c for c in constraints
+            if not (
+                    c.get("type") == str(ODRL.purpose)
+                    and c.get("operator") == str(ODRL.eq)
+            )
+        ]
 
     # Get actor refinements (grouped)
     actor_ref_query = """
@@ -399,7 +410,7 @@ def process_rule(g, rule_uri, rule_type):
         "action": action,
         "target": target,
         "purpose": purpose,
-        "query": "",    # Placeholder
+        "query": "",  # Placeholder
         "constraints": constraints,
         "actorrefinements": actor_refinements,
         "actionrefinements": action_refinements,
@@ -407,10 +418,10 @@ def process_rule(g, rule_uri, rule_type):
         "purposerefinements": []
     }
 
+
 def has_none_value_on_first_level(d):
     """ Check if dictionary d has at least one None value on the first level """
     return any((value is None) or (value == '' and key == "value") for key, value in d.items())
-
 
 
 def filter_dicts_with_none_values(data):
@@ -454,7 +465,6 @@ def convert_list_to_odrl_jsonld_no_user(data_list):
     odrl_duties = []
     odrl_rules = []
 
-
     policy = {
         "permission": odrl_permissions,
         "prohibition": odrl_prohibitions,
@@ -463,11 +473,11 @@ def convert_list_to_odrl_jsonld_no_user(data_list):
         "rule": odrl_rules,
         "uid": "http://example.org/policy-" + str(uuid.uuid4()),
         "@context": [
-        "http://www.w3.org/ns/odrl.jsonld",
-        {
-            "dcat": "http://www.w3.org/ns/dcat#",
-            "dpv": "https://w3id.org/dpv/owl#",
-        }
+            "http://www.w3.org/ns/odrl.jsonld",
+            {
+                "dcat": "http://www.w3.org/ns/dcat#",
+                "dpv": "https://w3id.org/dpv/owl#",
+            }
         ],
 
         "@type": "Policy",
@@ -477,18 +487,17 @@ def convert_list_to_odrl_jsonld_no_user(data_list):
             if "rule" in data:
                 ruleType = str(data["rule"].split("/")[-1]).lower()
 
-                if len(data["actorrefinements"])>0:
-                    actor = {"@type":"PartyCollection", "source": data["actor"], "refinement": []}
+                if len(data["actorrefinements"]) > 0:
+                    actor = {"@type": "PartyCollection", "source": data["actor"], "refinement": []}
                 else:
                     actor = data["actor"]
-                if len(data["actionrefinements"])>0:
+                if len(data["actionrefinements"]) > 0:
                     action = {"source": data["action"], "refinement": []}
                 else:
                     action = data["action"]
 
-
-                if len(data["targetrefinements"])>0:
-                    target = {"@type":"AssetCollection", "source": data["target"], "refinement": []}
+                if len(data["targetrefinements"]) > 0:
+                    target = {"@type": "AssetCollection", "source": data["target"], "refinement": []}
                 else:
                     target = data["target"]
 
@@ -499,10 +508,10 @@ def convert_list_to_odrl_jsonld_no_user(data_list):
                     "constraint": [],
                 }
 
-                if len(data["purposerefinements"])>0:
+                if len(data["purposerefinements"]) > 0:
 
                     purpose = data["purpose"]
-                    purposerefinements = {"and":[]}
+                    purposerefinements = {"and": []}
                     purposerefinements["and"].append({
                         "leftOperand": "purpose",
                         "operator": "http://www.w3.org/ns/odrl/2/eq",
@@ -550,7 +559,7 @@ def convert_list_to_odrl_jsonld_no_user(data_list):
                     "constraint": [],
                 }
             if "query" in data:
-                if data["query"] is not '':
+                if data["query"] != '':
                     odrl_jsonld["constraint"].append(
                         {
                             "leftOperand": "ex:query",
@@ -654,36 +663,34 @@ def odrl_convertor(data_dic):
         data_dic["odrl_policy"]["data"] = filtered_data
         data_dic["odrl_policy"]["odrl"] = odrl_format
 
-
-
         return data_dic
 
 
     else:
         return data_dic
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     """
         cactus policy format --> validation check --> negotiation_front_format --> filtered_data (clean the null value) --> convert to odrl_format
         for example in example_policies:
-            
-            
+
+
             Cactus policy format: policy_6_BIOSKIN_2025-09-22_13-17-07.json
             negotiation_front_format:policy_6_BIOSKIN_2025-09-22_13-17-07_negotiation_front_format.json        
             filtered_data: policy_6_BIOSKIN_2025-09-22_13-17-07_filtered_data.json
             odrl_format: policy_6_BIOSKIN_2025-09-22_13-17-07_odrl_format.json
-            
+
             make a request body to create a negotiation, where odrl_policy is that:
              "odrl_policy": {
                 "odrl":  odrl_format
                 "data":  filtered_data
             }
-            
+
             Also, this convertor can pase graph format from Abovo
             for example:
             graph_format.json -> graph_negotiation_front_format.json -> graph_filtered_data.json -> graph_odrl_format.json
-            
+
             so the request body using to create a negotiation is as follows:
             {
                 "_id": "68ecece0bb1e35369de0919a",
@@ -701,7 +708,7 @@ if __name__ == "__main__":
 
             }
 
-        
+
     """
 
     # read a policy file
@@ -713,8 +720,6 @@ if __name__ == "__main__":
 
     with open("example_policies/consumerRequest_support.json", "w", encoding="utf-8") as f:
         json.dump(data_dict, f, ensure_ascii=False, indent=2)
-
-
 
     # # read a policy file
     # p = Path("./example_policies/graph_format.json")
